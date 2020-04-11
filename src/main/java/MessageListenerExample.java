@@ -24,7 +24,9 @@ import net.dv8tion.jda.api.exceptions.RateLimitedException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -39,9 +41,11 @@ public class MessageListenerExample extends ListenerAdapter
         // we would use AccountType.CLIENT
         try
         {
-            JDA jda = new JDABuilder("Your-Token-Goes-Here")         // The token of the account that is logging in.
-                    .addEventListeners(new MessageListenerExample())  // An instance of a class that will handle events.
-                    .build();
+            final Properties properties = DiscordPropertiesReader.readProperties();
+            final String token = properties.getProperty("discord.bot_token");
+            final JDA jda = JDABuilder.createDefault(token)                   // Use provided token from command line arguments
+                            .addEventListeners(new MessageListenerExample())  // An instance of a class that will handle events.
+                            .build();
             jda.awaitReady(); // Blocking guarantees that JDA will be completely loaded.
             System.out.println("Finished Building JDA!");
         }
@@ -56,6 +60,8 @@ public class MessageListenerExample extends ListenerAdapter
             // the waiting can be interrupted. This is the exception that would fire in that situation.
             //As a note: in this extremely simplified example this will never occur. In fact, this will never occur unless
             // you use awaitReady in a thread that has the possibility of being interrupted (async thread usage and interrupts)
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

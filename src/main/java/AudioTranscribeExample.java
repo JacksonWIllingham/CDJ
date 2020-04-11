@@ -33,17 +33,17 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Properties;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class AudioTranscribeExample extends ListenerAdapter
 {
-    public static void main(String[] args) throws LoginException
-    {
-        String token = "MTkxMTM2ODk5NTMwODgzMDcz.Dno02A.ADoQqK6ZchrmpJsOyCnNSSzSxAA";
-
-        new JDABuilder(token)                            // Use provided token from command line arguments
+    public static void main(String[] args) throws LoginException, IOException {
+        final Properties properties = DiscordPropertiesReader.readProperties();
+        final String token = properties.getProperty("discord.bot_token");
+        JDABuilder.createDefault(token)                            // Use provided token from command line arguments
                 .addEventListeners(new AudioTranscribeExample())  // Start listening with this listener
                 .setActivity(Activity.listening("to jams")) // Inform users that we are jammin' it out
                 .setStatus(OnlineStatus.DO_NOT_DISTURB)     // Please don't disturb us while we're jammin'
